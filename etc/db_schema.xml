@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="add_by_link" resource="default" engine="innodb" comment="Add products by Links">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Entity ID"/>
+        <column xsi:type="varchar" name="token" nullable="false" length="128" comment="Link Token"/>
+        <column xsi:type="timestamp" name="token_created_at" nullable="false" on_update="false"
+                default="CURRENT_TIMESTAMP" comment="Link Token creation time"/>
+        <column xsi:type="smallint" name="expiration_period" padding="5" unsigned="true" nullable="false"
+                identity="false"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="ADD_BY_LINK_ENTITY_ID" indexType="btree">
+            <column name="entity_id"/>
+        </index>
+    </table>
+    <table name="add_by_link_product" resource="default" engine="innodb" comment="Products associated to link">
+        <column xsi:type="int" name="link_id" padding="10" unsigned="true" nullable="false" identity="false"
+                comment="Link ID"/>
+        <column xsi:type="int" name="product_id" padding="10" unsigned="true" nullable="false" identity="false"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="link_id"/>
+            <column name="product_id"/>
+        </constraint>
+        <index referenceId="ADD_BY_LINK_PRODUCT_LINK_ID_PRODUCT_ID" indexType="btree">
+            <column name="link_id"/>
+            <column name="product_id"/>
+        </index>
+        <constraint xsi:type="foreign" referenceId="ADD_BY_LINK_PRODUCT_LINK_ID_ADD_BY_LINK_LINK_ID"
+                    table="add_by_link_product" column="link_id" referenceTable="add_by_link"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="ADD_BY_LINK_PRODUCT_PRODUCT_ID_PRODUCT_ENTITY_ENTITY_ID"
+                    table="add_by_link_product" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+</schema>

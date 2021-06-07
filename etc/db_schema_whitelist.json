@@ -1,0 +1,30 @@
+{
+    "add_by_link": {
+        "column": {
+            "entity_id": true,
+            "token": true,
+            "token_created_at": true,
+            "expiration_period": true
+        },
+        "index": {
+            "ADD_BY_LINK_ENTITY_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "add_by_link_product": {
+        "column": {
+            "link_id": true,
+            "product_id": true
+        },
+        "index": {
+            "ADD_BY_LINK_PRODUCT_LINK_ID_PRODUCT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "ADD_BY_LINK_PRODUCT_LINK_ID_ADD_BY_LINK_ENTITY_ID": true,
+            "ADD_BY_LINK_PRODUCT_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID": true
+        }
+    }
+}
