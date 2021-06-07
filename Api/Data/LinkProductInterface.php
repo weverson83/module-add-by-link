@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Api\Data;
-
 
 interface LinkProductInterface
 {
