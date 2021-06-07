@@ -1,0 +1,22 @@
+{
+  "name": "weverson83/module-add-by-link",
+  "version": "1.0.0",
+  "description": "Adds a products to cart using a generated link",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*",
+    "magento/module-catalog": "103.0.*",
+    "magento/module-checkout": "100.3.*"
+  },
+  "license": [
+    "Proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Weverson83\\AddByLink\\": ""
+    }
+  }
+}
