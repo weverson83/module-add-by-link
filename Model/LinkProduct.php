@@ -3,10 +3,15 @@ declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Model;
 
+use Magento\Framework\Model\AbstractModel;
 use Weverson83\AddByLink\Api\Data\LinkProductInterface;
 
-class LinkProduct extends \Magento\Framework\DataObject implements LinkProductInterface
+class LinkProduct extends AbstractModel implements LinkProductInterface
 {
+    public function _construct()
+    {
+        $this->_init(\Weverson83\AddByLink\Model\ResourceModel\LinkProduct::class);
+    }
 
     /**
      * Retrieve product's ID

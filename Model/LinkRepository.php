@@ -50,9 +50,26 @@ class LinkRepository implements LinkRepositoryInterface
         return null;
     }
 
+    /**
+     * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @return array|null
+     */
     public function getByProduct(ProductInterface $product): ?array
     {
+        /** @var \Weverson83\AddByLink\Model\ResourceModel\Link\Collection $collection */
+        $collection = $this->collectionFactory->create();
+        $collection->addProductFilter($product);
 
+        if ($collection->getSize()) {
+            $items = [];
+            foreach ($collection as $item) {
+                $items[] = $item;
+            }
+
+            return $items;
+        }
+
+        return null;
     }
 
     public function save(LinkInterface $link): int
