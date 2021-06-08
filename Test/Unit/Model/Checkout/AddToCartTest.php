@@ -21,22 +21,27 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
      * @var ObjectManager
      */
     protected $objectManager;
+
     /**
      * @var CartInterface|MockObject|Quote
      */
     protected $cartMock;
+
     /**
      * @var \PHPUnit\Framework\MockObject\MockBuilder
      */
     protected $linkValidationMock;
+
     /**
      * @var MockObject|LinkRepositoryInterface
      */
     protected $linkRepositoryMock;
+
     /**
      * @var ProductRepositoryInterface|MockObject
      */
-    protected $productRepositoryMock;
+    protected $productRepoMock;
+
     /**
      * @var AddToCart
      */
@@ -58,14 +63,14 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
         $this->linkRepositoryMock = $this->getMockBuilder(LinkRepositoryInterface::class)
             ->getMockForAbstractClass();
 
-        $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
+        $this->productRepoMock = $this->getMockBuilder(ProductRepositoryInterface::class)
             ->getMockForAbstractClass();
 
         $this->model = $this->objectManager->getObject(AddToCart::class, [
             'cart' => $this->cartMock,
             'linkValidation' => $this->linkValidationMock,
             'linkRepository' => $this->linkRepositoryMock,
-            'productRepository' => $this->productRepositoryMock,
+            'productRepository' => $this->productRepoMock,
         ]);
     }
 
@@ -74,8 +79,9 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
         $link = $this->getMockBuilder(LinkInterface::class)
             ->getMockForAbstractClass();
 
+        $token = 'RANDOMSTRING';
         $link->method('getToken')
-            ->willReturn('RANDOMSTRING');
+            ->willReturn($token);
 
         $this->linkRepositoryMock->expects($this->once())
             ->method('getByToken')
@@ -88,7 +94,7 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(1);
 
-        $this->productRepositoryMock->expects($this->once())
+        $this->productRepoMock->expects($this->once())
             ->method('getById')
             ->willReturn($productMock);
 
@@ -111,6 +117,13 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
         $this->cartMock->expects($this->once())
             ->method('save');
 
-        $this->model->execute('RANDOMSTRING');
+        $this->model->execute($token);
+    }
+
+    public function testExecuteWithNonExistingToken()
+    {
+        $this->expectException(\Magento\Framework\Exception\State\InputMismatchException::class);
+        $this->expectExceptionMessage('The token is invalid. Correct it and try again.');
+        $this->model->execute('INVALID_TOKEN');
     }
 }

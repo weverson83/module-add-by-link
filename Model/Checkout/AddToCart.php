@@ -53,7 +53,7 @@ class AddToCart
     {
         $link = $this->linkRepository->getByToken($token);
         if ($link === null) {
-            throw new InputMismatchException(__('The token is mismatched. Reset and try again.'));
+            throw new InputMismatchException(__('The token is invalid. Correct it and try again.'));
         }
 
         if (!$this->linkValidation->execute($link)) {

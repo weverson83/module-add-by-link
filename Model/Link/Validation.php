@@ -32,7 +32,7 @@ class Validation
      */
     public function execute(LinkInterface $link): bool
     {
-        if (!is_string($link->getToken()) || empty($link->getToken())) {
+        if (empty($link->getToken())) {
             $params = ['fieldName' => 'LinkToken'];
             throw new InputException(__('"%fieldName" is required. Enter and try again.', $params));
         }
