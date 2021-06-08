@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Api\Data;
 
-interface LinkInterface
+interface LinkInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
     /**#@+
      * Constants for keys of data array.

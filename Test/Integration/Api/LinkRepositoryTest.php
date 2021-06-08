@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace Weverson83\AddByLink\Test\Integration;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Api\ProductRepositoryInterface;
+use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
-use Weverson83\AddByLink\Model\Link;
 
 class LinkRepositoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,10 +32,10 @@ class LinkRepositoryTest extends \PHPUnit\Framework\TestCase
         $links = $this->repository->getActiveList();
         $this->assertNotNull($links);
         $this->assertCount(1, $links);
+        $this->assertResultsInstances($links);
     }
 
     /**
-     * @magentoAppArea adminhtml
      * @magentoDataFixture ../../../../app/code/Weverson83/AddByLink/Test/Integration/_fixtures/product_with_link.php
      */
     public function testGetByProduct()
@@ -47,5 +46,20 @@ class LinkRepositoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNotNull($links);
         $this->assertCount(1, $links);
+        $this->assertResultsInstances($links);
+    }
+
+    /**
+     * @param array $links
+     */
+    protected function assertResultsInstances(array $links): void
+    {
+        if (!count($links)) {
+            $this->fail('Link list is empty');
+        }
+
+        foreach ($links as $link) {
+            $this->assertInstanceOf(LinkInterface::class, $link);
+        }
     }
 }

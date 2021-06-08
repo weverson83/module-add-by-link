@@ -9,16 +9,7 @@
             <argument name="extensionActions" xsi:type="array">
                 <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
                     <item name="read" xsi:type="array">
-                        <item name="add_by_link_read" xsi:type="string">Weverson83\AddByLink\Model\Link\ReadHandler</item>
-                    </item>
-                    <item name="create" xsi:type="array">
-                        <item name="add_by_link_create" xsi:type="string">Weverson83\AddByLink\Model\Link\CreateHandler</item>
-                    </item>
-                    <item name="update" xsi:type="array">
-                        <item name="add_by_link_update" xsi:type="string">Weverson83\AddByLink\Model\Link\UpdateHandler</item>
-                    </item>
-                    <item name="delete" xsi:type="array">
-                        <item name="add_by_link_delete" xsi:type="string">Weverson83\AddByLink\Model\Link\DeleteHandler</item>
+                        <item name="addByLinkListRead" xsi:type="string">Weverson83\AddByLink\Model\Link\ReadHandler</item>
                     </item>
                 </item>
             </argument>

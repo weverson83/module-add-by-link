@@ -6,7 +6,7 @@ namespace Weverson83\AddByLink\Model\Link;
 use Magento\Framework\EntityManager\Operation\ExtensionInterface;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
 
-class CreateHandler implements ExtensionInterface
+class ReadHandler implements ExtensionInterface
 {
 
     /**
@@ -25,15 +25,19 @@ class CreateHandler implements ExtensionInterface
      * @param \Magento\Catalog\Api\Data\ProductInterface $entity
      * @param array $arguments
      * @return \Magento\Catalog\Api\Data\ProductInterface
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function execute($entity, $arguments = [])
+    public function execute($entity, $arguments = []): \Magento\Catalog\Api\Data\ProductInterface
     {
-        /** @var \Weverson83\AddByLink\Api\Data\LinkInterface[] $links */
-        $links = $entity->getExtensionAttributes()->getAddByLinkList() ?? [];
+        $entityExtension = $entity->getExtensionAttributes();
+        $links = $this->linkRepository->getByProduct($entity);
 
-        foreach ($links as $link) {
-            $link->setId(null);
-            $this->linkRepository->save($entity->getSku(), $link, !(bool)$entity->getStoreId());
+        if ($links) {
+            $entityExtension->setAddByLinkList($links);
         }
+
+        $entity->setExtensionAttributes($entityExtension);
+
+        return $entity;
     }
 }

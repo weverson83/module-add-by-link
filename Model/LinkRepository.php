@@ -59,6 +59,7 @@ class LinkRepository implements LinkRepositoryInterface
         /** @var \Weverson83\AddByLink\Model\ResourceModel\Link\Collection $collection */
         $collection = $this->collectionFactory->create();
         $collection->addProductFilter($product);
+        $collection->addActiveFilter();
 
         if ($collection->getSize()) {
             $items = [];
