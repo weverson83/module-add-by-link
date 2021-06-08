@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">add_by_link_listing.addByLinkListDataSource</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>add_by_link_columns</spinner>
+        <deps>
+            <dep>add_by_link_listing.addByLinkListDataSource</dep>
+        </deps>
+        <buttons>
+            <button name="add">
+                <url path="*/*/new"/>
+                <class>primary</class>
+                <label translate="true">Add new Link</label>
+            </button>
+        </buttons>
+    </settings>
+    <dataSource name="addByLinkListDataSource" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">entity_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Weverson83_AddByLink::Link</aclResource>
+        <dataProvider name="addByLinkListDataSource" class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="add_by_link_columns">
+        <selectionsColumn name="ids">
+            <settings>
+                <indexField>entity_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="entity_id">
+            <settings>
+                <filter>text</filter>
+                <sorting>asc</sorting>
+                <label translate="true">ID</label>
+            </settings>
+        </column>
+        <column name="token">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Token</label>
+            </settings>
+        </column>
+        <column name="expiration_period">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Expiration Period</label>
+            </settings>
+        </column>
+        <column name="token_created_at">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Token Created At</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Weverson83\AddByLink\Ui\Component\Listing\Column\LinkActions">
+            <settings>
+                <indexField>entity_id</indexField>
+                <resizeEnabled>false</resizeEnabled>
+                <resizeDefaultWidth>107</resizeDefaultWidth>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

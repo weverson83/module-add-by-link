@@ -15,4 +15,18 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="Weverson83\AddByLink\Model\ResourceModel\Link\Grid\Collection"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">add_by_link</argument>
+            <argument name="resourceModel" xsi:type="string">Weverson83\AddByLink\Model\ResourceModel\Link\Collection</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="addByLinkListDataSource" xsi:type="string">Weverson83\AddByLink\Model\ResourceModel\Link\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

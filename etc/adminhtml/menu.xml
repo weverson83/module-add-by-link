@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Weverson83::top_level" title="Weverson83" module="Weverson83_AddByLink" sortOrder="9999"
+             resource="Magento_Backend::content"/>
+        <add id="Weverson83_AddByLink::add_by_link" title="Add By Link" module="Weverson83_AddByLink" sortOrder="9999"
+             resource="Magento_Backend::content" parent="Weverson83::top_level" action="add_by_link/link/index"/>
+    </menu>
+</config>

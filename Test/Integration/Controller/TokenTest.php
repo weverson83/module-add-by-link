@@ -18,6 +18,14 @@ class TokenTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->dispatch('add_by_link/token/process');
 
         $this->assertRedirect($this->stringContains('checkout/cart'));
+
+        $this->assertSessionMessages(
+            $this->equalTo(
+                [
+                    'You added the product(s) to your shopping cart.'
+                ]
+            )
+        );
     }
 
     public function testProcessActionWithInvalidToken()
@@ -27,7 +35,7 @@ class TokenTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->dispatch('add_by_link/token/process');
 
-        $this->assertRedirect();
+        $this->assertRedirect($this->stringContains('home'));
         $this->assertSessionMessages(
             $this->equalTo(
                 [
