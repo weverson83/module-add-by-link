@@ -15,17 +15,6 @@ interface LinkInterface
     /**#@-*/
 
     /**
-     * @return int
-     */
-    public function getId(): int;
-
-    /**
-     * @param int $entityId
-     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
-     */
-    public function setId(int $entityId): LinkInterface;
-
-    /**
      * Retrieve token hash string
      *
      * @return string

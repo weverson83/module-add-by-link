@@ -3,26 +3,30 @@ declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Model;
 
+use Magento\Framework\Model\AbstractModel;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
 
-class Link extends \Magento\Framework\DataObject implements LinkInterface
+/**
+ * Class Link
+ * @package Weverson83\AddByLink\Model
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ */
+class Link extends AbstractModel implements LinkInterface
 {
 
     /**
-     * @return int
+     * @var string
      */
-    public function getId(): int
-    {
-        return $this->getData(self::ID);
-    }
+    protected $_idFieldName = self::ID;
 
     /**
-     * @param int $entityId
-     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
+     * Set resource
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    public function setId(int $entityId): LinkInterface
+    protected function _construct()
     {
-        return $this->setData(self::ID, $entityId);
+        $this->_init(\Weverson83\AddByLink\Model\ResourceModel\Link::class);
     }
 
     /**
