@@ -58,7 +58,7 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productExtensions);
 
         $this->linkRepository->expects($this->once())
-            ->method('getByProduct')
+            ->method('getActiveByProduct')
             ->willReturn([$link1, $link2]);
 
         $this->linkRepository->expects($this->never())

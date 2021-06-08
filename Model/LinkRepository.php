@@ -6,22 +6,24 @@ namespace Weverson83\AddByLink\Model;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
+use Weverson83\AddByLink\Model\ResourceModel\Link as LinkResource;
+use Weverson83\AddByLink\Model\ResourceModel\Link\CollectionFactory;
 
 class LinkRepository implements LinkRepositoryInterface
 {
 
     /**
-     * @var \Weverson83\AddByLink\Model\ResourceModel\Link\CollectionFactory
+     * @var CollectionFactory
      */
     private $collectionFactory;
     /**
-     * @var \Weverson83\AddByLink\Model\ResourceModel\Link
+     * @var LinkResource
      */
     private $resourceModel;
 
     public function __construct(
-        \Weverson83\AddByLink\Model\ResourceModel\Link\CollectionFactory $collectionFactory,
-        \Weverson83\AddByLink\Model\ResourceModel\Link $resourceModel
+        CollectionFactory $collectionFactory,
+        LinkResource $resourceModel
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->resourceModel = $resourceModel;
@@ -34,9 +36,8 @@ class LinkRepository implements LinkRepositoryInterface
      */
     public function getActiveList(): ?array
     {
-        /** @var \Weverson83\AddByLink\Model\ResourceModel\Link\Collection $collection */
-        $collection = $this->collectionFactory->create();
-        $collection->addActiveFilter();
+        $collection = $this->collectionFactory->create()
+            ->addActiveFilter();
 
         $links = [];
         if ($collection->getSize()) {
@@ -51,15 +52,16 @@ class LinkRepository implements LinkRepositoryInterface
     }
 
     /**
+     * Retrieve all links by product
+     *
      * @param \Magento\Catalog\Api\Data\ProductInterface $product
-     * @return array|null
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface[]|null
      */
-    public function getByProduct(ProductInterface $product): ?array
+    public function getActiveByProduct(ProductInterface $product): ?array
     {
-        /** @var \Weverson83\AddByLink\Model\ResourceModel\Link\Collection $collection */
-        $collection = $this->collectionFactory->create();
-        $collection->addProductFilter($product);
-        $collection->addActiveFilter();
+        $collection = $this->collectionFactory->create()
+            ->addActiveFilter()
+            ->addProductFilter($product);
 
         if ($collection->getSize()) {
             $items = [];
@@ -73,14 +75,47 @@ class LinkRepository implements LinkRepositoryInterface
         return null;
     }
 
+    /**
+     * Update link of the given product
+     *
+     * @param \Weverson83\AddByLink\Api\Data\LinkInterface $link
+     * @return int
+     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     */
     public function save(LinkInterface $link): int
     {
         $this->resourceModel->save($link);
         return (int) $link->getId();
     }
 
+    /**
+     * Delete link
+     *
+     * @param \Weverson83\AddByLink\Api\Data\LinkInterface $link
+     * @return bool
+     * @throws \Exception
+     */
     public function delete(LinkInterface $link): bool
     {
-        // TODO: Implement delete() method.
+        $this->resourceModel->delete($link);
+        return true;
+    }
+
+    /**
+     * Retrieve one link by token string
+     *
+     * @param string $token
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface|null
+     */
+    public function getByToken(string $token): ?LinkInterface
+    {
+        $collection = $this->collectionFactory->create()
+            ->addTokenFilter($token);
+
+        foreach ($collection as $link) {
+            return $link;
+        }
+
+        return null;
     }
 }

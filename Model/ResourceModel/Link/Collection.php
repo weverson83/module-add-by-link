@@ -72,4 +72,15 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
         return $this;
     }
+
+    /**
+     * Add filter by token string
+     *
+     * @param string $token
+     * @return Collection
+     */
+    public function addTokenFilter(string $token): Collection
+    {
+        return $this->addFieldToFilter(LinkInterface::TOKEN, $token);
+    }
 }

@@ -3,6 +3,12 @@ declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Api\Data;
 
+/**
+ * Interface LinkInterface
+ * @package Weverson83\AddByLink\Api\Data
+ * @method LinkInterface setId($value)
+ * @method string getId()
+ */
 interface LinkInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
     /**#@+
@@ -58,4 +64,9 @@ interface LinkInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Weverson83\AddByLink\Api\Data\LinkInterface
      */
     public function setExpirationPeriod(int $expirationPeriod): LinkInterface;
+
+    /**
+     * @return array
+     */
+    public function getProductIds(): array;
 }

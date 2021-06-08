@@ -3,8 +3,14 @@ declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Model;
 
+use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
+use Weverson83\AddByLink\Api\Data\LinkProductInterface;
+use Weverson83\AddByLink\Model\ResourceModel\LinkProduct\CollectionFactory as LinkProductCollectionFactory;
 
 /**
  * Class Link
@@ -18,6 +24,32 @@ class Link extends AbstractModel implements LinkInterface
      * @var string
      */
     protected $_idFieldName = self::ID;
+
+    /**
+     * @var LinkProductCollectionFactory
+     */
+    private $linkProdColFactory;
+
+    /**
+     * Link constructor.
+     * @param Context $context
+     * @param Registry $registry
+     * @param LinkProductCollectionFactory $linkProdColFactory
+     * @param AbstractResource|null $resource
+     * @param AbstractDb|null $resourceCollection
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        Registry $registry,
+        LinkProductCollectionFactory $linkProdColFactory,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->linkProdColFactory = $linkProdColFactory;
+    }
 
     /**
      * Set resource
@@ -90,5 +122,17 @@ class Link extends AbstractModel implements LinkInterface
     public function setExpirationPeriod(int $expirationPeriod): LinkInterface
     {
         return $this->setData(self::EXPIRATION_PERIOD, $expirationPeriod);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductIds(): array
+    {
+        /** @var \Weverson83\AddByLink\Model\ResourceModel\LinkProduct\Collection $collection */
+        $collection = $this->linkProdColFactory->create();
+        $collection->addFilter(LinkProductInterface::LINK_ID, $this->getId());
+
+        return $collection->getConnection()->fetchPairs($collection->getSelect());
     }
 }

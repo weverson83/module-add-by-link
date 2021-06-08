@@ -38,11 +38,11 @@ class LinkRepositoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoDataFixture ../../../../app/code/Weverson83/AddByLink/Test/Integration/_fixtures/product_with_link.php
      */
-    public function testGetByProduct()
+    public function testGetActiveByProduct()
     {
         $product = $this->objectManager->create(ProductInterface::class);
         $product->setId(1);
-        $links = $this->repository->getByProduct($product);
+        $links = $this->repository->getActiveByProduct($product);
 
         $this->assertNotNull($links);
         $this->assertCount(1, $links);

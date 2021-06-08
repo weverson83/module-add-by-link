@@ -16,10 +16,20 @@ interface LinkRepositoryInterface
     public function getActiveList(): ?array;
 
     /**
+     * Retrieve all links by product
+     *
      * @param \Magento\Catalog\Api\Data\ProductInterface $product
      * @return \Weverson83\AddByLink\Api\Data\LinkInterface[]|null
      */
-    public function getByProduct(ProductInterface $product): ?array;
+    public function getActiveByProduct(ProductInterface $product): ?array;
+
+    /**
+     * Retrieve link by token string
+     *
+     * @param string $token
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface|null
+     */
+    public function getByToken(string $token): ?LinkInterface;
 
     /**
      * Update link of the given product

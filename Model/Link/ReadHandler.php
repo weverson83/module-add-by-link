@@ -30,7 +30,7 @@ class ReadHandler implements ExtensionInterface
     public function execute($entity, $arguments = []): \Magento\Catalog\Api\Data\ProductInterface
     {
         $entityExtension = $entity->getExtensionAttributes();
-        $links = $this->linkRepository->getByProduct($entity);
+        $links = $this->linkRepository->getActiveByProduct($entity);
 
         if ($links) {
             $entityExtension->setAddByLinkList($links);
