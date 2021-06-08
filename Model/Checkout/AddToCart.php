@@ -4,7 +4,12 @@ declare(strict_types=1);
 namespace Weverson83\AddByLink\Model\Checkout;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\State\ExpiredException;
 use Magento\Framework\Exception\State\InputMismatchException;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
@@ -28,6 +33,10 @@ class AddToCart
      * @var ProductRepositoryInterface
      */
     private $productRepository;
+    /**
+     * @var CartRepositoryInterface
+     */
+    private $cartRepository;
 
     /**
      * AddToCart constructor.
@@ -35,27 +44,30 @@ class AddToCart
      * @param Validation $linkValidation
      * @param LinkRepositoryInterface $linkRepository
      * @param ProductRepositoryInterface $productRepository
+     * @param CartRepositoryInterface $cartRepository
      */
     public function __construct(
         CartInterface $cart,
         Validation $linkValidation,
         LinkRepositoryInterface $linkRepository,
-        ProductRepositoryInterface $productRepository
+        ProductRepositoryInterface $productRepository,
+        CartRepositoryInterface $cartRepository
     ) {
         $this->cart = $cart;
         $this->linkValidation = $linkValidation;
         $this->linkRepository = $linkRepository;
         $this->productRepository = $productRepository;
+        $this->cartRepository = $cartRepository;
     }
 
     /**
      * @param string $token
      * @return bool
      * @throws InputMismatchException
-     * @throws \Magento\Framework\Exception\InputException
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Magento\Framework\Exception\State\ExpiredException
+     * @throws InputException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     * @throws ExpiredException
      */
     public function execute(string $token): bool
     {
@@ -73,7 +85,7 @@ class AddToCart
             $this->cart->addProduct($product);
         }
 
-        $this->cart->save();
+        $this->cartRepository->save($this->cart);
 
         return true;
     }

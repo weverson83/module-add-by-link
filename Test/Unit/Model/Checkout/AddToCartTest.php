@@ -6,6 +6,7 @@ namespace Weverson83\AddByLink\Test\Unit\Model\Checkout;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote;
@@ -43,6 +44,10 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
     protected $productRepoMock;
 
     /**
+     * @var CartRepositoryInterface|MockObject
+     */
+    protected $cartRepositoryMock;
+    /**
      * @var AddToCart
      */
     protected $model;
@@ -66,11 +71,15 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
         $this->productRepoMock = $this->getMockBuilder(ProductRepositoryInterface::class)
             ->getMockForAbstractClass();
 
+        $this->cartRepositoryMock = $this->getMockBuilder(CartRepositoryInterface::class)
+            ->getMockForAbstractClass();
+
         $this->model = $this->objectManager->getObject(AddToCart::class, [
             'cart' => $this->cartMock,
             'linkValidation' => $this->linkValidationMock,
             'linkRepository' => $this->linkRepositoryMock,
             'productRepository' => $this->productRepoMock,
+            'cartRepository' => $this->cartRepositoryMock,
         ]);
     }
 
@@ -114,8 +123,9 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
             ->with($productMock)
             ->willReturn($item);
 
-        $this->cartMock->expects($this->once())
-            ->method('save');
+        $this->cartRepositoryMock->expects($this->once())
+            ->method('save')
+            ->with($this->cartMock);
 
         $this->model->execute($token);
     }
