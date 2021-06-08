@@ -26,14 +26,14 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture Magento/Quote/_files/is_salable_product.php
      * @magentoDataFixture ../../../../app/code/Weverson83/AddByLink/Test/Integration/_fixtures/product_links.php
      */
     public function testExecuteWithThreeLinksAndOneExpiredShouldReturnTwo()
     {
         /** @var ProductInterface $product */
         $product = $this->objectManager->create(ProductInterface::class);
-        $product->setId(1);
+        $product->setId(99);
 
         $this->model->execute($product);
 
@@ -42,7 +42,7 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture Magento/Quote/_files/is_salable_product.php
      * @magentoDataFixture ../../../../app/code/Weverson83/AddByLink/Test/Integration/_fixtures/product_links.php
      */
     public function testExtensionAttributeIsLoadedAlongWithProduct()
@@ -50,7 +50,7 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
         /** @var ProductRepositoryInterface $productRepository */
         $productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
         /** @var ProductInterface $product */
-        $product = $productRepository->getById(1, true, null, true);
+        $product = $productRepository->getById(99, true, null, true);
 
         $extensionAttributes = $product->getExtensionAttributes();
 

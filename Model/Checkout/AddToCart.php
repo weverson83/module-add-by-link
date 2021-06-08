@@ -7,7 +7,6 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Exception\State\InputMismatchException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote;
-use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
 use Weverson83\AddByLink\Model\Link\Validation;
 
@@ -49,6 +48,15 @@ class AddToCart
         $this->productRepository = $productRepository;
     }
 
+    /**
+     * @param string $token
+     * @return bool
+     * @throws InputMismatchException
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\State\ExpiredException
+     */
     public function execute(string $token): bool
     {
         $link = $this->linkRepository->getByToken($token);

@@ -110,7 +110,7 @@ class Link extends AbstractModel implements LinkInterface
      */
     public function getExpirationPeriod(): int
     {
-        return $this->getData(self::EXPIRATION_PERIOD);
+        return (int) $this->getData(self::EXPIRATION_PERIOD);
     }
 
     /**
