@@ -42,7 +42,7 @@
         <field name="token" formElement="input" sortOrder="10">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">Link</item>
+                    <item name="source" xsi:type="string">data</item>
                 </item>
             </argument>
             <settings>
@@ -57,18 +57,30 @@
         <field name="expiration_period" formElement="input" sortOrder="10">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">Link</item>
+                    <item name="source" xsi:type="string">data</item>
                 </item>
             </argument>
             <settings>
                 <dataType>text</dataType>
                 <label translate="true">Expiration Period</label>
                 <notice>Provide the number in hours</notice>
-                <dataScope>token</dataScope>
+                <dataScope>expiration_period</dataScope>
                 <validation>
                     <rule name="required-entry" xsi:type="boolean">true</rule>
                 </validation>
             </settings>
         </field>
+    </fieldset>
+    <fieldset name="assign_products" sortOrder="20">
+        <settings>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+            <label translate="true">Assign products to this link</label>
+        </settings>
+        <container name="assign_products_container" sortOrder="160">
+            <htmlContent name="html_content">
+                <block name="assign_gallery" class="Weverson83\AddByLink\Block\Adminhtml\Link\AssignProducts"/>
+            </htmlContent>
+        </container>
     </fieldset>
 </form>

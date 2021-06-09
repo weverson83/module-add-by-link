@@ -17,6 +17,8 @@ class LinkActions extends \Magento\Ui\Component\Listing\Columns\Column
 
     const URL_PATH_DELETE = 'add_by_link/link/delete';
 
+    const URL_PATH_EDIT = 'add_by_link/link/edit';
+
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
@@ -47,6 +49,15 @@ class LinkActions extends \Magento\Ui\Component\Listing\Columns\Column
             foreach ($dataSource['data']['items'] as & $item) {
                 if (isset($item['entity_id'])) {
                     $item[$this->getData('name')] = [
+                        'edit' => [
+                            'href' => $this->urlBuilder->getUrl(
+                                static::URL_PATH_EDIT,
+                                [
+                                    'id' => $item['entity_id']
+                                ]
+                            ),
+                            'label' => __('Edit')
+                        ],
                         'delete' => [
                             'href' => $this->urlBuilder->getUrl(
                                 static::URL_PATH_DELETE,

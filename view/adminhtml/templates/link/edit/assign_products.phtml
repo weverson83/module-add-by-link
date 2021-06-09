@@ -1,0 +1,22 @@
+<?php
+/** @var \Weverson83\AddByLink\Block\Adminhtml\Link\AssignProducts $block */
+
+/** @var \Weverson83\AddByLink\Block\Adminhtml\Link\Tab\Product $blockGrid */
+$blockGrid = $block->getBlockGrid();
+$gridJsObjectName = $blockGrid->getJsObjectName();
+?>
+<?= $block->getGridHtml() ?>
+<input type="hidden" name="link_products" id="in_link_products" data-form-part="add_by_link_form" value="" />
+<script type="text/x-magento-init">
+    {
+        "#in_link_products": {
+            "Weverson83_AddByLink/js/link/assign-products": {
+                "selectedProducts": <?= /* @escapeNotVerified */ $block->getProductsJson() ?>,
+                "gridJsObjectName": <?= /* @escapeNotVerified */ '"' . $gridJsObjectName . '"' ?: '{}' ?>
+            }
+        }
+    }
+</script>
+<script>
+    require('mage/apply/main').apply();
+</script>

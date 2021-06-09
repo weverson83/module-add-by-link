@@ -9,11 +9,10 @@ use Weverson83\AddByLink\Model\ResourceModel\Link\CollectionFactory;
 
 class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
 {
-
     /**
      * @var LinkInterface[]
      */
-    protected $loadedData = [];
+    protected $loadedData;
 
     /**
      * @var DataPersistorInterface
@@ -60,11 +59,9 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
             $this->loadedData[$link->getId()] = $link->getData();
         }
 
-        $data = $this->dataPersistor->get('add_by_link_link');
+        $link = $this->dataPersistor->get('add_by_link_link');
 
-        if (!empty($data)) {
-            $link = $this->collection->getNewEmptyItem();
-            $link->setData($data);
+        if (!empty($link)) {
             $this->loadedData[$link->getId()] = $link->getData();
             $this->dataPersistor->clear('add_by_link_link');
         }

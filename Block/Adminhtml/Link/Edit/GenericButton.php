@@ -28,7 +28,7 @@ abstract class GenericButton
      */
     public function getModelId(): ?int
     {
-        return $this->context->getRequest()->getParam('id');
+        return (int) $this->context->getRequest()->getParam('id');
     }
 
     /**

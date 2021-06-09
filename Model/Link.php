@@ -10,7 +10,6 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Api\Data\LinkProductInterface;
-use Weverson83\AddByLink\Model\ResourceModel\LinkProduct\CollectionFactory as LinkProductCollectionFactory;
 
 /**
  * Class Link
@@ -26,11 +25,6 @@ class Link extends AbstractModel implements LinkInterface
     protected $_idFieldName = self::ID;
 
     /**
-     * @var LinkProductCollectionFactory
-     */
-    private $linkProdColFactory;
-
-    /**
      * Link constructor.
      * @param Context $context
      * @param Registry $registry
@@ -42,13 +36,11 @@ class Link extends AbstractModel implements LinkInterface
     public function __construct(
         Context $context,
         Registry $registry,
-        LinkProductCollectionFactory $linkProdColFactory,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-        $this->linkProdColFactory = $linkProdColFactory;
     }
 
     /**
@@ -129,10 +121,17 @@ class Link extends AbstractModel implements LinkInterface
      */
     public function getProductIds(): array
     {
-        /** @var \Weverson83\AddByLink\Model\ResourceModel\LinkProduct\Collection $collection */
-        $collection = $this->linkProdColFactory->create();
-        $collection->addFilter(LinkProductInterface::LINK_ID, $this->getId());
+        if (!$this->getId()) {
+            return [];
+        }
 
-        return $collection->getConnection()->fetchPairs($collection->getSelect());
+        $connection = $this->getResource()->getConnection();
+        $select = $connection->select()
+            ->from(
+                ['main_table' => $connection->getTableName('add_by_link_product')],
+                ['link_id', 'product_id']
+            )->where(LinkProductInterface::LINK_ID . ' = ' . $this->getId());
+
+        return $connection->fetchPairs($select);
     }
 }
