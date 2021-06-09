@@ -122,7 +122,7 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
             \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE,
             \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE,
         ];
-        $collection->addFieldToFilter('type_id', ['in' => $invalidTypes]);
+        $collection->addFieldToFilter('type_id', ['nin' => $invalidTypes]);
         $this->setCollection($collection);
 
         return parent::_prepareCollection();

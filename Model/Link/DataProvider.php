@@ -63,7 +63,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         $link = $this->dataPersistor->get('add_by_link_link');
 
         if (!empty($link)) {
-            $this->loadedData[$link->getId()] = $this->buildLinkData($link);
+            $this->loadedData[$link->getId()] = $link->getData();
         }
 
         if (isset($this->loadedData)) {
@@ -71,7 +71,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         }
 
         foreach ($this->collection as $link) {
-            $this->loadedData[$link->getId()] = $this->buildLinkData($link);
+            $this->loadedData[$link->getId()] = $link->getData();
         }
 
         return $this->loadedData;
@@ -87,7 +87,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         $meta = parent::getMeta();
 
         $link = $this->dataPersistor->get('add_by_link_link');
-        if ($link->getToken()) {
+        if ($link->getId()) {
             $config = [
                 'general' => [
                     'children' => [
@@ -117,17 +117,5 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
     public function getGeneratedUrl(LinkInterface $link): string
     {
         return $this->urlInterface->getBaseUrl() . 'add_by_link/token/process/token/' . $link->getToken();
-    }
-
-    /**
-     * @param $link
-     * @return array
-     */
-    protected function buildLinkData(LinkInterface $link): array
-    {
-        $data = $link->getData();
-        $data['generated_url'] = $this->getGeneratedUrl($link);
-
-        return $data;
     }
 }

@@ -4,10 +4,14 @@ declare(strict_types=1);
 namespace Weverson83\AddByLink\Model;
 
 use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Intl\DateTimeFactory;
+use Magento\Framework\Math\Random;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\DateTime;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Api\Data\LinkProductInterface;
 use Weverson83\AddByLink\Model\ResourceModel\Link as LinkResource;
@@ -29,12 +33,23 @@ class Link extends AbstractModel implements LinkInterface
     /**
      * @var LinkResource
      */
-    protected $linkResource;
+    private $linkResource;
+    /**
+     * @var Random
+     */
+    private $mathRandom;
+    /**
+     * @var DateTimeFactory
+     */
+    private $dateTimeFactory;
 
     /**
      * Link constructor.
      * @param Context $context
      * @param Registry $registry
+     * @param LinkResource $linkResource
+     * @param Random $mathRandom
+     * @param DateTimeFactory $dateTimeFactory
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
@@ -43,12 +58,16 @@ class Link extends AbstractModel implements LinkInterface
         Context $context,
         Registry $registry,
         LinkResource $linkResource,
+        Random $mathRandom,
+        DateTimeFactory $dateTimeFactory,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->linkResource = $linkResource;
+        $this->mathRandom = $mathRandom;
+        $this->dateTimeFactory = $dateTimeFactory;
     }
 
     /**
@@ -146,11 +165,26 @@ class Link extends AbstractModel implements LinkInterface
     }
 
     /**
+     * Generates token with Unique hash for the new object
+     *
+     * @return Link
+     * @throws LocalizedException
+     */
+    public function beforeSave(): Link
+    {
+        if ($this->isObjectNew()) {
+            $this->setToken($this->mathRandom->getUniqueHash());
+        }
+
+        return parent::beforeSave();
+    }
+
+    /**
      * @return Link
      */
     public function afterSave(): Link
     {
-        if (is_array($this->getAddedProductIds())) {
+        if (is_array($this->getAddedProductIds()) && count($this->getAddedProductIds())) {
             $this->linkResource->updateProductRelations($this, $this->getAddedProductIds());
         }
 
