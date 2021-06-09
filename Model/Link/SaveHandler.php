@@ -47,7 +47,7 @@ class SaveHandler
      */
     public function execute(array $data): LinkInterface
     {
-        $entityId = (int) isset($data['id']) ?? 0;
+        $entityId = isset($data['entity_id']) ? (int) $data['entity_id'] : 0;
 
         $link = $this->getLinkObject($entityId);
 
@@ -67,9 +67,7 @@ class SaveHandler
             $link->setAddedProductIds(array_keys($productIds));
         }
 
-        $this->linkRepository->save($link);
-
-        return $link;
+        return $this->linkRepository->save($link);
     }
 
     /**

@@ -79,13 +79,13 @@ class LinkRepository implements LinkRepositoryInterface
      * Update link of the given product
      *
      * @param \Weverson83\AddByLink\Api\Data\LinkInterface $link
-     * @return int
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
      * @throws \Magento\Framework\Exception\AlreadyExistsException
      */
-    public function save(LinkInterface $link): int
+    public function save(LinkInterface $link): \Weverson83\AddByLink\Api\Data\LinkInterface
     {
         $this->resourceModel->save($link);
-        return (int) $link->getId();
+        return $this->getById((int)$link->getId());
     }
 
     /**

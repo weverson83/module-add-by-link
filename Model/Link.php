@@ -172,7 +172,7 @@ class Link extends AbstractModel implements LinkInterface
      */
     public function beforeSave(): Link
     {
-        if ($this->isObjectNew()) {
+        if (!$this->hasData('token')) {
             $this->setToken($this->mathRandom->getUniqueHash());
         }
 

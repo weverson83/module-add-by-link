@@ -20,9 +20,9 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
      */
     private $dataPersistor;
     /**
-     * @var UrlInterface
+     * @var UrlHandler
      */
-    private $urlInterface;
+    private $urlHandler;
 
 
     /**
@@ -43,13 +43,13 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         $requestFieldName,
         CollectionFactory $collectionFactory,
         DataPersistorInterface $dataPersistor,
-        UrlInterface $urlInterface,
+        UrlHandler $urlHandler,
         array $meta = [],
         array $data = []
     ) {
         $this->collection = $collectionFactory->create();
         $this->dataPersistor = $dataPersistor;
-        $this->urlInterface = $urlInterface;
+        $this->urlHandler = $urlHandler;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -95,7 +95,10 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
                             'arguments' => [
                                 'data' => [
                                     'config' => [
-                                        'notice' => __('You can copy the url: ') . $this->getGeneratedUrl($link),
+                                        'notice' =>
+                                            __('You can copy the url: %1',
+                                                $this->urlHandler->getGeneratedUrl($link)
+                                            )
                                     ],
                                 ],
                             ],
@@ -108,14 +111,5 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         }
 
         return $meta;
-    }
-
-    /**
-     * @param int|null $linkId
-     * @return string
-     */
-    public function getGeneratedUrl(LinkInterface $link): string
-    {
-        return $this->urlInterface->getBaseUrl() . 'add_by_link/token/process/token/' . $link->getToken();
     }
 }

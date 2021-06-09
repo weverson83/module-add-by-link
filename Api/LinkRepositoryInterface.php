@@ -43,9 +43,9 @@ interface LinkRepositoryInterface
      * Update link of the given product
      *
      * @param \Weverson83\AddByLink\Api\Data\LinkInterface $link
-     * @return int
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
      */
-    public function save(LinkInterface $link): int;
+    public function save(LinkInterface $link): \Weverson83\AddByLink\Api\Data\LinkInterface;
 
     /**
      * Delete link

@@ -12,6 +12,7 @@ use Magento\Framework\View\Result\PageFactory;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
 use Weverson83\AddByLink\Controller\Adminhtml\Link;
 use Weverson83\AddByLink\Model\Link\SaveHandler;
+use Weverson83\AddByLink\Model\Link\UrlHandler;
 
 class Save extends Link
 {
@@ -19,6 +20,10 @@ class Save extends Link
      * @var SaveHandler
      */
     private $saveHandler;
+    /**
+     * @var UrlHandler
+     */
+    private $urlHandler;
 
     /**
      * Save constructor.
@@ -28,6 +33,7 @@ class Save extends Link
      * @param PageFactory $resultPageFactory
      * @param SaveHandler $saveHandler
      * @param LinkRepositoryInterface $linkRepository
+     * @param UrlHandler $urlHandler
      */
     public function __construct(
         Context $context,
@@ -35,10 +41,12 @@ class Save extends Link
         ForwardFactory $resultForwardFactory,
         PageFactory $resultPageFactory,
         SaveHandler $saveHandler,
-        LinkRepositoryInterface $linkRepository
+        LinkRepositoryInterface $linkRepository,
+        UrlHandler $urlHandler
     ) {
         parent::__construct($context, $dataPersistor, $resultForwardFactory, $resultPageFactory, $linkRepository);
         $this->saveHandler = $saveHandler;
+        $this->urlHandler = $urlHandler;
     }
 
     /**
@@ -53,7 +61,9 @@ class Save extends Link
         if ($data) {
             try {
                 $link = $this->saveHandler->execute($data);
-                $this->messageManager->addSuccessMessage(__('You saved the Link.'));
+                $this->messageManager->addSuccessMessage(
+                    __('The link was generated with the url: %1', $this->urlHandler->getGeneratedUrl($link))
+                );
                 $this->dataPersistor->clear('add_by_link_link');
 
                 if ($this->getRequest()->getParam('back')) {
