@@ -4,23 +4,25 @@ declare(strict_types=1);
 namespace Weverson83\AddByLink\Model\Checkout;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\State\ExpiredException;
 use Magento\Framework\Exception\State\InputMismatchException;
+use Magento\Framework\Message\ManagerInterface as MessageManager;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Model\Quote;
+use Magento\Quote\Api\Data\CartItemInterface;
 use Weverson83\AddByLink\Api\LinkRepositoryInterface;
 use Weverson83\AddByLink\Model\Link\Validation;
 
 class AddToCart
 {
     /**
-     * @var CartInterface|Quote
+     * @var CheckoutSession
      */
-    private $cart;
+    private $checkoutSession;
     /**
      * @var Validation
      */
@@ -37,27 +39,34 @@ class AddToCart
      * @var CartRepositoryInterface
      */
     private $cartRepository;
+    /**
+     * @var MessageManager
+     */
+    private $messageManager;
 
     /**
      * AddToCart constructor.
-     * @param CartInterface $cart
+     * @param CheckoutSession $checkoutSession
      * @param Validation $linkValidation
      * @param LinkRepositoryInterface $linkRepository
      * @param ProductRepositoryInterface $productRepository
      * @param CartRepositoryInterface $cartRepository
+     * @param MessageManager $messageManager
      */
     public function __construct(
-        CartInterface $cart,
+        CheckoutSession $checkoutSession,
         Validation $linkValidation,
         LinkRepositoryInterface $linkRepository,
         ProductRepositoryInterface $productRepository,
-        CartRepositoryInterface $cartRepository
+        CartRepositoryInterface $cartRepository,
+        MessageManager $messageManager
     ) {
-        $this->cart = $cart;
+        $this->checkoutSession = $checkoutSession;
         $this->linkValidation = $linkValidation;
         $this->linkRepository = $linkRepository;
         $this->productRepository = $productRepository;
         $this->cartRepository = $cartRepository;
+        $this->messageManager = $messageManager;
     }
 
     /**
@@ -65,7 +74,6 @@ class AddToCart
      * @return bool
      * @throws InputMismatchException
      * @throws InputException
-     * @throws LocalizedException
      * @throws NoSuchEntityException
      * @throws ExpiredException
      */
@@ -80,13 +88,34 @@ class AddToCart
             return false;
         }
 
+        $addedProducts = 0;
+
         foreach ($link->getProductIds() as $productId) {
             $product = $this->productRepository->getById($productId);
-            $this->cart->addProduct($product);
+            try {
+                $result = $this->getQuote()->addProduct($product);
+                if (!$result instanceof CartItemInterface) {
+                    throw new LocalizedException(__($result));
+                }
+                ++$addedProducts;
+            } catch (LocalizedException $exception) {
+                $this->messageManager->addExceptionMessage(
+                    $exception,
+                    __('%1 is not available right now', $product->getName())
+                );
+            }
         }
 
-        $this->cartRepository->save($this->cart);
+        if ($addedProducts > 0) {
+            $this->cartRepository->save($this->getQuote());
+            return true;
+        }
 
-        return true;
+        return false;
+    }
+
+    private function getQuote(): CartInterface
+    {
+        return $this->checkoutSession->getQuote();
     }
 }

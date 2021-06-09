@@ -5,6 +5,7 @@ namespace Weverson83\AddByLink\Test\Unit\Model\Checkout;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
@@ -48,6 +49,14 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
      */
     protected $cartRepositoryMock;
     /**
+     * @var SessionManagerInterface|MockObject
+     */
+    protected $checkoutSessMock;
+    /**
+     * @var CartInterface|MockObject
+     */
+    protected $quoteMock;
+    /**
      * @var AddToCart
      */
     protected $model;
@@ -55,10 +64,6 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-
-        $this->cartMock = $this->getMockBuilder(CartInterface::class)
-            ->setMethods(['addProduct', 'save'])
-            ->getMockForAbstractClass();
 
         $this->linkValidationMock = $this->getMockBuilder(Validation::class)
             ->disableOriginalConstructor()
@@ -74,8 +79,20 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
         $this->cartRepositoryMock = $this->getMockBuilder(CartRepositoryInterface::class)
             ->getMockForAbstractClass();
 
+        $this->checkoutSessMock = $this->getMockBuilder(\Magento\Checkout\Model\Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getQuote'])
+            ->getMockForAbstractClass();
+
+        $this->quoteMock = $this->getMockBuilder(CartInterface::class)
+            ->setMethods(['addProduct'])
+            ->getMockForAbstractClass();
+
+        $this->checkoutSessMock->method('getQuote')
+            ->willReturn($this->quoteMock);
+
         $this->model = $this->objectManager->getObject(AddToCart::class, [
-            'cart' => $this->cartMock,
+            'checkoutSession' => $this->checkoutSessMock,
             'linkValidation' => $this->linkValidationMock,
             'linkRepository' => $this->linkRepositoryMock,
             'productRepository' => $this->productRepoMock,
@@ -118,14 +135,15 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
             ->with($link)
             ->willReturn(true);
 
-        $this->cartMock->expects($this->once())
+
+        $this->quoteMock->expects($this->once())
             ->method('addProduct')
             ->with($productMock)
             ->willReturn($item);
 
         $this->cartRepositoryMock->expects($this->once())
             ->method('save')
-            ->with($this->cartMock);
+            ->with($this->quoteMock);
 
         $this->model->execute($token);
     }
