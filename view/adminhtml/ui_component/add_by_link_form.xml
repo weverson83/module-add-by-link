@@ -39,21 +39,6 @@
         <settings>
             <label>General</label>
         </settings>
-        <field name="token" formElement="input" sortOrder="10">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">data</item>
-                </item>
-            </argument>
-            <settings>
-                <dataType>text</dataType>
-                <label translate="true">Token</label>
-                <dataScope>token</dataScope>
-                <validation>
-                    <rule name="required-entry" xsi:type="boolean">true</rule>
-                </validation>
-            </settings>
-        </field>
         <field name="expiration_period" formElement="input" sortOrder="10">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -67,6 +52,41 @@
                 <dataScope>expiration_period</dataScope>
                 <validation>
                     <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="token" formElement="input" sortOrder="20">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">data</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Token</label>
+                <dataScope>token</dataScope>
+                <disabled>true</disabled>
+                <notice>This field is auto generated</notice>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">false</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="token_created_at" formElement="date" sortOrder="30">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">data</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Created At</label>
+                <dataScope>token_created_at</dataScope>
+                <disabled>true</disabled>
+                <notice>This field is auto generated</notice>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">false</rule>
                 </validation>
             </settings>
         </field>

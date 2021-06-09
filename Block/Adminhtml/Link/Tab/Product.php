@@ -199,7 +199,7 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
     /**
      * @return string
      */
-    public function getGridUrl()
+    public function getGridUrl(): string
     {
         return $this->getUrl('add_by_link/link/grid', ['_current' => true]);
     }

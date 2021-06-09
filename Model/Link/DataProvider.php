@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Weverson83\AddByLink\Model\Link;
 
 use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\UrlInterface;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Model\ResourceModel\Link\CollectionFactory;
 
@@ -18,6 +19,10 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
      * @var DataPersistorInterface
      */
     private $dataPersistor;
+    /**
+     * @var UrlInterface
+     */
+    private $urlInterface;
 
 
     /**
@@ -28,6 +33,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
      * @param string $requestFieldName
      * @param CollectionFactory $collectionFactory
      * @param DataPersistorInterface $dataPersistor
+     * @param UrlInterface $urlInterface
      * @param array $meta
      * @param array $data
      */
@@ -37,11 +43,13 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         $requestFieldName,
         CollectionFactory $collectionFactory,
         DataPersistorInterface $dataPersistor,
+        UrlInterface $urlInterface,
         array $meta = [],
         array $data = []
     ) {
         $this->collection = $collectionFactory->create();
         $this->dataPersistor = $dataPersistor;
+        $this->urlInterface = $urlInterface;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -52,19 +60,74 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
      */
     public function getData()
     {
-        if (isset($this->loadedData)) {
-            return $this->loadedData;
-        }
-        foreach ($this->collection as $link) {
-            $this->loadedData[$link->getId()] = $link->getData();
-        }
-
         $link = $this->dataPersistor->get('add_by_link_link');
 
         if (!empty($link)) {
-            $this->loadedData[$link->getId()] = $link->getData();
+            $this->loadedData[$link->getId()] = $this->buildLinkData($link);
+        }
+
+        if (isset($this->loadedData)) {
+            return $this->loadedData;
+        }
+
+        foreach ($this->collection as $link) {
+            $this->loadedData[$link->getId()] = $this->buildLinkData($link);
         }
 
         return $this->loadedData;
+    }
+
+    /**
+     * Add the generated url (if any) to token notice
+     *
+     * @return array
+     */
+    public function getMeta(): array
+    {
+        $meta = parent::getMeta();
+
+        $link = $this->dataPersistor->get('add_by_link_link');
+        if ($link->getToken()) {
+            $config = [
+                'general' => [
+                    'children' => [
+                        'token' => [
+                            'arguments' => [
+                                'data' => [
+                                    'config' => [
+                                        'notice' => __('You can copy the url: ') . $this->getGeneratedUrl($link),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            $meta = array_merge_recursive($meta, $config);
+        }
+
+        return $meta;
+    }
+
+    /**
+     * @param int|null $linkId
+     * @return string
+     */
+    public function getGeneratedUrl(LinkInterface $link): string
+    {
+        return $this->urlInterface->getBaseUrl() . 'add_by_link/token/process/token/' . $link->getToken();
+    }
+
+    /**
+     * @param $link
+     * @return array
+     */
+    protected function buildLinkData(LinkInterface $link): array
+    {
+        $data = $link->getData();
+        $data['generated_url'] = $this->getGeneratedUrl($link);
+
+        return $data;
     }
 }
