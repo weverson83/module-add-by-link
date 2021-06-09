@@ -10,13 +10,14 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use Weverson83\AddByLink\Api\Data\LinkInterface;
 use Weverson83\AddByLink\Api\Data\LinkProductInterface;
+use Weverson83\AddByLink\Model\ResourceModel\Link as LinkResource;
 
 /**
  * Class Link
  * @package Weverson83\AddByLink\Model
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- * @method setAddedProductIds(array $productIds)
- * @method getAddedProductIds()
+ * @method self setAddedProductIds(array $productIds)
+ * @method array getAddedProductIds()
  */
 class Link extends AbstractModel implements LinkInterface
 {
@@ -25,12 +26,15 @@ class Link extends AbstractModel implements LinkInterface
      * @var string
      */
     protected $_idFieldName = self::ID;
+    /**
+     * @var LinkResource
+     */
+    protected $linkResource;
 
     /**
      * Link constructor.
      * @param Context $context
      * @param Registry $registry
-     * @param LinkProductCollectionFactory $linkProdColFactory
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
@@ -38,11 +42,13 @@ class Link extends AbstractModel implements LinkInterface
     public function __construct(
         Context $context,
         Registry $registry,
+        LinkResource $linkResource,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->linkResource = $linkResource;
     }
 
     /**
@@ -52,7 +58,7 @@ class Link extends AbstractModel implements LinkInterface
      */
     protected function _construct()
     {
-        $this->_init(\Weverson83\AddByLink\Model\ResourceModel\Link::class);
+        $this->_init(LinkResource::class);
     }
 
     /**
@@ -119,6 +125,8 @@ class Link extends AbstractModel implements LinkInterface
     }
 
     /**
+     * Retrieve product IDs related to link
+     *
      * @return array
      */
     public function getProductIds(): array
@@ -137,32 +145,13 @@ class Link extends AbstractModel implements LinkInterface
         return $connection->fetchCol($select);
     }
 
+    /**
+     * @return Link
+     */
     public function afterSave(): Link
     {
         if (is_array($this->getAddedProductIds())) {
-            $connection = $this->getResource()->getConnection();
-            $where = sprintf(
-                '%s = %s AND %s NOT IN (%s)',
-                LinkProductInterface::LINK_ID,
-                $connection->quote($this->getId()),
-                LinkProductInterface::PRODUCT_ID,
-                $connection->quote($this->getAddedProductIds())
-            );
-            $connection->delete('add_by_link_product', $where);
-            $links = [];
-
-            foreach ($this->getAddedProductIds() as $productId) {
-                $links[] = [
-                    LinkProductInterface::LINK_ID => $this->getId(),
-                    LinkProductInterface::PRODUCT_ID => $productId,
-                ];
-            }
-
-            $connection->insertOnDuplicate(
-                $connection->getTableName('add_by_link_product'),
-                $links,
-                [LinkProductInterface::LINK_ID, LinkProductInterface::PRODUCT_ID]
-            );
+            $this->linkResource->updateProductRelations($this, $this->getAddedProductIds());
         }
 
         return parent::afterSave();

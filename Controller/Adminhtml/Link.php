@@ -8,6 +8,7 @@ use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\View\Result\PageFactory;
+use Weverson83\AddByLink\Api\LinkRepositoryInterface;
 
 abstract class Link extends \Magento\Backend\App\Action
 {
@@ -25,6 +26,10 @@ abstract class Link extends \Magento\Backend\App\Action
      * @var PageFactory
      */
     protected $resultPageFactory;
+    /**
+     * @var LinkRepositoryInterface
+     */
+    protected $linkRepository;
 
     /**
      * @param Context $context
@@ -36,11 +41,13 @@ abstract class Link extends \Magento\Backend\App\Action
         Context $context,
         DataPersistorInterface $dataPersistor,
         ForwardFactory $resultForwardFactory,
-        PageFactory $resultPageFactory
+        PageFactory $resultPageFactory,
+        LinkRepositoryInterface $linkRepository
     ) {
         $this->dataPersistor = $dataPersistor;
         $this->resultForwardFactory = $resultForwardFactory;
         $this->resultPageFactory = $resultPageFactory;
+        $this->linkRepository = $linkRepository;
         parent::__construct($context);
     }
 

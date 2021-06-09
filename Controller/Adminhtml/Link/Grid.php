@@ -11,6 +11,7 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\Result\PageFactory;
+use Weverson83\AddByLink\Api\LinkRepositoryInterface;
 use Weverson83\AddByLink\Controller\Adminhtml\Link;
 
 class Grid extends Link
@@ -32,6 +33,7 @@ class Grid extends Link
      * @param PageFactory $resultPageFactory
      * @param RawFactory $resultRawFactory
      * @param LayoutFactory $layoutFactory
+     * @param LinkRepositoryInterface $linkRepository
      */
     public function __construct(
         Context $context,
@@ -39,11 +41,12 @@ class Grid extends Link
         ForwardFactory $resultForwardFactory,
         PageFactory $resultPageFactory,
         RawFactory $resultRawFactory,
-        LayoutFactory $layoutFactory
+        LayoutFactory $layoutFactory,
+        LinkRepositoryInterface $linkRepository
     ) {
         $this->resultRawFactory = $resultRawFactory;
         $this->layoutFactory = $layoutFactory;
-        parent::__construct($context, $dataPersistor, $resultForwardFactory, $resultPageFactory);
+        parent::__construct($context, $dataPersistor, $resultForwardFactory, $resultPageFactory, $linkRepository);
     }
 
     /**

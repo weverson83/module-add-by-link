@@ -118,4 +118,22 @@ class LinkRepository implements LinkRepositoryInterface
 
         return null;
     }
+
+    /**
+     * Retrieve one link by id
+     *
+     * @param int $entityId
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface|null
+     */
+    public function getById(int $entityId): ?LinkInterface
+    {
+        $collection = $this->collectionFactory->create()
+            ->addFieldToFilter(LinkInterface::ID, $entityId);
+
+        foreach ($collection as $link) {
+            return $link;
+        }
+
+        return null;
+    }
 }

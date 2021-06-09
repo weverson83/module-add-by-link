@@ -5,6 +5,7 @@ namespace Weverson83\AddByLink\Block\Adminhtml\Link\Tab;
 use Magento\Backend\Block\Widget\Grid;
 use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Extended;
+use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Framework\App\ObjectManager;
@@ -114,6 +115,14 @@ class Product extends \Magento\Backend\Block\Widget\Grid\Extended
             'price'
         );
 
+        //Products with required options cannot be added to cart
+        $collection->addFilterByRequiredOptions();
+        $invalidTypes = [
+            \Magento\Bundle\Model\Product\Type::TYPE_CODE,
+            \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE,
+            \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE,
+        ];
+        $collection->addFieldToFilter('type_id', ['in' => $invalidTypes]);
         $this->setCollection($collection);
 
         return parent::_prepareCollection();

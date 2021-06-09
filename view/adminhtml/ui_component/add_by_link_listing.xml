@@ -43,37 +43,37 @@
         <paging name="listing_paging"/>
     </listingToolbar>
     <columns name="add_by_link_columns">
-        <selectionsColumn name="ids">
+        <selectionsColumn name="ids" sortOrder="10">
             <settings>
                 <indexField>entity_id</indexField>
             </settings>
         </selectionsColumn>
-        <column name="entity_id">
+        <column name="entity_id" sortOrder="20">
             <settings>
                 <filter>text</filter>
                 <sorting>asc</sorting>
                 <label translate="true">ID</label>
             </settings>
         </column>
-        <column name="token">
+        <column name="token" sortOrder="30">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Token</label>
             </settings>
         </column>
-        <column name="expiration_period">
+        <column name="expiration_period" sortOrder="40">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Expiration Period</label>
             </settings>
         </column>
-        <column name="token_created_at">
+        <column name="token_created_at" sortOrder="50">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Token Created At</label>
             </settings>
         </column>
-        <actionsColumn name="actions" class="Weverson83\AddByLink\Ui\Component\Listing\Column\LinkActions">
+        <actionsColumn name="actions" class="Weverson83\AddByLink\Ui\Component\Listing\Column\LinkActions" sortOrder="99">
             <settings>
                 <indexField>entity_id</indexField>
                 <resizeEnabled>false</resizeEnabled>

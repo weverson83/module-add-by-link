@@ -32,6 +32,14 @@ interface LinkRepositoryInterface
     public function getByToken(string $token): ?LinkInterface;
 
     /**
+     * Retrieve one link by id
+     *
+     * @param int $entityId
+     * @return \Weverson83\AddByLink\Api\Data\LinkInterface|null
+     */
+    public function getById(int $entityId): ?LinkInterface;
+
+    /**
      * Update link of the given product
      *
      * @param \Weverson83\AddByLink\Api\Data\LinkInterface $link

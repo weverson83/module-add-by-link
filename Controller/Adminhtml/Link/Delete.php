@@ -18,13 +18,13 @@ class Delete extends \Weverson83\AddByLink\Controller\Adminhtml\Link
      */
     public function execute(): ResultInterface
     {
+        $entityId = (int)$this->getRequest()->getParam('id');
+        $link = $this->linkRepository->getById($entityId);
         $resultRedirect = $this->resultRedirectFactory->create();
-        $entityId = $this->getRequest()->getParam('id');
-        if ($entityId) {
+
+        if ($link) {
             try {
-                $model = $this->_objectManager->create(\Weverson83\AddByLink\Model\Link::class);
-                $model->load($entityId);
-                $model->delete();
+                $this->linkRepository->delete($link);
                 $this->messageManager->addSuccessMessage(__('You deleted the Link.'));
                 return $resultRedirect->setPath('*/*/');
             } catch (\Exception $e) {
