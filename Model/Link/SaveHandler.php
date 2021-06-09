@@ -54,11 +54,16 @@ class SaveHandler
         if (!$link->getId() && $entityId) {
             throw new LocalizedException(__('This Link no longer exists.'));
         }
+        unset($data['token']);
+        unset($data['token_created_at']);
 
         $link->setData($data);
 
         if (isset($data['link_products'])) {
-            $productIds = $this->json->unserialize($data['link_products']);
+            $productIds = array_filter($this->json->unserialize($data['link_products']), function ($productId) {
+                return is_integer($productId) && $productId > 0;
+            }, ARRAY_FILTER_USE_KEY);
+
             $link->setAddedProductIds(array_keys($productIds));
         }
 
