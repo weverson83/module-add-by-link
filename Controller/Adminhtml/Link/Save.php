@@ -3,12 +3,41 @@ declare(strict_types=1);
 
 namespace Weverson83\AddByLink\Controller\Adminhtml\Link;
 
+use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\ForwardFactory;
+use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\View\Result\PageFactory;
 use Weverson83\AddByLink\Controller\Adminhtml\Link;
 
 class Save extends Link
 {
+    /**
+     * @var Json
+     */
+    private $json;
+
+    /**
+     * Save constructor.
+     * @param Context $context
+     * @param DataPersistorInterface $dataPersistor
+     * @param ForwardFactory $resultForwardFactory
+     * @param PageFactory $resultPageFactory
+     * @param Json $json
+     */
+    public function __construct(
+        Context $context,
+        DataPersistorInterface $dataPersistor,
+        ForwardFactory $resultForwardFactory,
+        PageFactory $resultPageFactory,
+        Json $json
+    ) {
+        parent::__construct($context, $dataPersistor, $resultForwardFactory, $resultPageFactory);
+        $this->json = $json;
+    }
+
     /**
      * Save action
      *
@@ -28,6 +57,11 @@ class Save extends Link
             }
 
             $model->setData($data);
+
+            if (isset($data['link_products'])) {
+                $productIds = $this->json->unserialize($data['link_products']);
+                $model->setAddedProductIds(array_keys($productIds));
+            }
 
             try {
                 $model->save();

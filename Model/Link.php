@@ -15,6 +15,8 @@ use Weverson83\AddByLink\Api\Data\LinkProductInterface;
  * Class Link
  * @package Weverson83\AddByLink\Model
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @method setAddedProductIds(array $productIds)
+ * @method getAddedProductIds()
  */
 class Link extends AbstractModel implements LinkInterface
 {
@@ -67,7 +69,7 @@ class Link extends AbstractModel implements LinkInterface
      * Set token hash string
      *
      * @param string $token
-     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
+     * @return LinkInterface
      */
     public function setToken(string $token): LinkInterface
     {
@@ -88,7 +90,7 @@ class Link extends AbstractModel implements LinkInterface
      * Set token's creation timestamp
      *
      * @param string $tokenCreatedAt
-     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
+     * @return LinkInterface
      */
     public function setTokenCreatedAt(string $tokenCreatedAt): LinkInterface
     {
@@ -109,7 +111,7 @@ class Link extends AbstractModel implements LinkInterface
      * Set expiration period in hours
      *
      * @param int $expirationPeriod
-     * @return \Weverson83\AddByLink\Api\Data\LinkInterface
+     * @return LinkInterface
      */
     public function setExpirationPeriod(int $expirationPeriod): LinkInterface
     {
@@ -129,9 +131,40 @@ class Link extends AbstractModel implements LinkInterface
         $select = $connection->select()
             ->from(
                 ['main_table' => $connection->getTableName('add_by_link_product')],
-                ['link_id', 'product_id']
+                ['product_id']
             )->where(LinkProductInterface::LINK_ID . ' = ' . $this->getId());
 
-        return $connection->fetchPairs($select);
+        return $connection->fetchCol($select);
+    }
+
+    public function afterSave(): Link
+    {
+        if (is_array($this->getAddedProductIds())) {
+            $connection = $this->getResource()->getConnection();
+            $where = sprintf(
+                '%s = %s AND %s NOT IN (%s)',
+                LinkProductInterface::LINK_ID,
+                $connection->quote($this->getId()),
+                LinkProductInterface::PRODUCT_ID,
+                $connection->quote($this->getAddedProductIds())
+            );
+            $connection->delete('add_by_link_product', $where);
+            $links = [];
+
+            foreach ($this->getAddedProductIds() as $productId) {
+                $links[] = [
+                    LinkProductInterface::LINK_ID => $this->getId(),
+                    LinkProductInterface::PRODUCT_ID => $productId,
+                ];
+            }
+
+            $connection->insertOnDuplicate(
+                $connection->getTableName('add_by_link_product'),
+                $links,
+                [LinkProductInterface::LINK_ID, LinkProductInterface::PRODUCT_ID]
+            );
+        }
+
+        return parent::afterSave();
     }
 }

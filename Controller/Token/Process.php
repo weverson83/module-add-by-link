@@ -9,7 +9,6 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Exception\NotFoundException;
 use Weverson83\AddByLink\Model\Checkout\AddToCart;
 

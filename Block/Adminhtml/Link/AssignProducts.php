@@ -84,7 +84,11 @@ class AssignProducts extends \Magento\Backend\Block\Template
      */
     public function getProductsJson(): string
     {
-        $products = $this->getCurrentLink()->getProductIds();
+        $products = [];
+        foreach ($this->getCurrentLink()->getProductIds() as $position => $productId) {
+            $products[$productId] = $position+1;
+        }
+
         if (!empty($products)) {
             return $this->json->serialize($products);
         }

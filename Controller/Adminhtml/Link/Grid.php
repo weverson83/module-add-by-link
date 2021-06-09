@@ -54,12 +54,6 @@ class Grid extends Link
      */
     public function execute(): Raw
     {
-        $link = $this->dataPersistor->get('add_by_link_link');
-        if (!$link) {
-            /** @var Redirect $resultRedirect */
-            $resultRedirect = $this->resultRedirectFactory->create();
-            return $resultRedirect->setPath('add_by_link/link/index', ['_current' => true, 'id' => null]);
-        }
         $resultRaw = $this->resultRawFactory->create();
         return $resultRaw->setContents(
             $this->layoutFactory->create()->createBlock(

@@ -63,7 +63,6 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
 
         if (!empty($link)) {
             $this->loadedData[$link->getId()] = $link->getData();
-            $this->dataPersistor->clear('add_by_link_link');
         }
 
         return $this->loadedData;
